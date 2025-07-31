@@ -1,0 +1,4 @@
+#ifndef HUGEPAGE_ARENA_HPP
+#define HUGEPAGE_ARENA_HPP
+
+#endif
