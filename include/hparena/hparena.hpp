@@ -14,7 +14,9 @@ namespace {
 constexpr std::size_t kHugepageSize = 1 << 21;
 
 template <typename T>
-constexpr T alignUp(T size, T alignment) requires std::is_unsigned_v<T> {
+constexpr T alignUp(T size, T alignment)
+    requires std::is_unsigned_v<T>
+{
     return (size + alignment - 1) & ~(alignment - 1);
 }
 } // namespace
