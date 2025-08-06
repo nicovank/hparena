@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <cerrno>
 #include <chrono>
 #include <cstdint>
@@ -19,10 +20,10 @@
 
 namespace {
 struct Node {
-    Node* next;
-    char padding[4128 - sizeof(Node*)];
+    Node* next = nullptr;
+    std::array<std::uint8_t, 4128 - sizeof(Node*)> padding;
 
-    Node() : next(nullptr) {}
+    Node() = default;
 };
 
 static_assert(sizeof(Node) >= 4096);
@@ -82,7 +83,7 @@ int main(int argc, char** argv) {
         std::unreachable();
     }
 
-    std::pmr::polymorphic_allocator<Node> allocator(resource);
+    const std::pmr::polymorphic_allocator<Node> allocator(resource);
 
     // Nest so the vector destructor runs before the resource destructor...
     {
@@ -99,11 +100,11 @@ int main(int argc, char** argv) {
         }
 
         std::cout << "Setting up cycle..." << std::endl;
-        objects.back().next = &objects[0];
+        objects.back().next = objects.data();
         for (std::size_t i = 0; i < nObjects - 1; ++i) {
             objects[i].next = &objects[i + 1];
         }
-        Node* n = &objects[0];
+        Node* n = objects.data();
 
         std::cout << "Iterating..." << std::endl;
 
