@@ -62,7 +62,7 @@ class HugepageArena : public std::pmr::memory_resource {
         }
 
         const std::uintptr_t alignedPtr = alignUp(currentBumpPtr, alignment);
-        if (alignedPtr + bytes < currentChunkSize) [[likely]] {
+        if (alignedPtr + bytes < currentChunkSize) {
             currentBumpPtr = alignedPtr + bytes;
             return reinterpret_cast<void*>(alignedPtr);
         }
