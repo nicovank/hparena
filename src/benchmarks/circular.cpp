@@ -94,23 +94,29 @@ int main(int argc, char** argv) {
             objects.emplace_back();
         }
 
-        if (shuffle) {
-            std::cout << "Shuffling iteration order..." << std::endl;
-            std::shuffle(objects.begin(), objects.end(), std::random_device{});
+        std::cout << "Setting up cycle..." << std::endl;
+        std::vector<Node*> addresses;
+        addresses.reserve(nObjects);
+        for (std::size_t i = 0; i < nObjects; ++i) {
+            addresses.push_back(&objects[i]);
         }
 
-        std::cout << "Setting up cycle..." << std::endl;
-        objects.back().next = objects.data();
-        for (std::size_t i = 0; i < nObjects - 1; ++i) {
-            objects[i].next = &objects[i + 1];
+        if (shuffle) {
+            std::mt19937_64 generator(std::random_device{}());
+            std::shuffle(addresses.begin(), addresses.end(), generator);
         }
-        Node* n = objects.data();
+
+        for (std::size_t i = 0; i < nObjects - 1; ++i) {
+            addresses[i]->next = addresses[i + 1];
+        }
+        addresses.back()->next = objects.data();
 
         std::cout << "Iterating..." << std::endl;
 
         const auto start = std::chrono::high_resolution_clock::now();
+        Node* n = objects.data();
         while (--iterations > 0) {
-            n = n->next;
+            n = n->next->next->next->next->next->next->next->next->next->next;
         }
         benchmark::DoNotOptimize(n);
         const auto end = std::chrono::high_resolution_clock::now();
