@@ -35,3 +35,7 @@ add_executable(mmap_non_multiple src/empirical/mmap_non_multiple.cpp)
 # Benchmark executables.
 add_executable(circular src/benchmarks/circular.cpp)
 target_link_libraries(circular PRIVATE argparse::argparse benchmark::benchmark hparena)
+
+# Unit tests.
+enable_testing()
+add_subdirectory(test)
